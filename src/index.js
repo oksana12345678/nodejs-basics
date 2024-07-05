@@ -1,7 +1,12 @@
-import  startServer  from './server.js';
+import startServer from './server.js';
+import { initMongoDB } from './db/initMongoDB.js';
 
-startServer();
+const bootstrap = async () => {
+  await initMongoDB();
+  startServer();
+};
 
+bootstrap();
 // import fs from 'fs/promises';
 
 // const message = 'Hello world';
