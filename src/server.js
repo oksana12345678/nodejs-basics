@@ -34,12 +34,6 @@ const startServer = () => {
       message: 'Route not found',
     });
   });
-  app.use((error, req, res) => {
-    res.status(500).json({
-      message: 'Something went wrong',
-      error: error.message,
-    });
-  });
 
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
