@@ -4,6 +4,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import env from './utils/env.js';
 import studentRouter from './routers/students.js';
+import notFoundHandler from './middlewares/notFoundHandler.js';
+import errorHandler from './middlewares/errorHandler.js';
 dotenv.config();
 
 const PORT = Number(env('PORT', '3000'));
@@ -29,12 +31,8 @@ const startServer = () => {
   });
   app.use(studentRouter);
 
-  app.use('*', (req, res) => {
-    res.status(404).json({
-      message: 'Route not found',
-    });
-  });
-
+  app.use('*', notFoundHandler);
+  app.use(errorHandler);
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });
