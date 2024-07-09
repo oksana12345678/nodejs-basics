@@ -30,7 +30,6 @@ const startServer = () => {
     next();
   });
   app.use(studentRouter);
-
   app.use('*', notFoundHandler);
   app.use(errorHandler);
   app.listen(PORT, () => {

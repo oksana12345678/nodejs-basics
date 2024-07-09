@@ -1,5 +1,9 @@
 import createHttpError from 'http-errors';
-import { getAllStudents, getStudentById } from '../services/students.js';
+import {
+  createStudent,
+  getAllStudents,
+  getStudentById,
+} from '../services/students.js';
 
 export const getStudentsController = async (req, res, next) => {
   try {
@@ -31,4 +35,13 @@ export const getStudentByIdController = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+export const createStudentController = async (req, res) => {
+  const student = await createStudent(req.body);
+  res.status(201).json({
+    status: 201,
+    message: 'Successfully created a student!',
+    data: student,
+  });
 };
