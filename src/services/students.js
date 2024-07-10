@@ -1,4 +1,4 @@
-import StudentCollection from '../validation/models/student.js';
+import StudentCollection from '../validation/student.js';
 
 export const getAllStudents = async () => {
   const students = await StudentCollection.find();
