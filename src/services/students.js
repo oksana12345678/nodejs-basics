@@ -1,8 +1,30 @@
+import { calculatePaginationData } from '../utils/calculatePaginationData.js';
 import StudentCollection from '../validation/student.js';
+import { SORT_ORDER } from '../constants/index.js';
 
-export const getAllStudents = async () => {
-  const students = await StudentCollection.find();
-  return students;
+export const getAllStudents = async ({
+  page = 1,
+  perPage = 10,
+  sortOrder = SORT_ORDER.ASC,
+  sortBy = '_id',
+}) => {
+  const limit = perPage;
+  const skip = (page - 1) * perPage;
+
+  const studentQuery = StudentCollection.find();
+  const studentsCount = await StudentCollection.countDocuments();
+
+  const students = await studentQuery
+    .skip(skip)
+    .limit(limit)
+    .sort({ [sortBy]: sortOrder })
+    .exec();
+  const paginationData = calculatePaginationData(studentsCount, perPage, page);
+
+  return {
+    data: students,
+    ...paginationData,
+  };
 };
 
 export const getStudentById = async (studentId) => {
