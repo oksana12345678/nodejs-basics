@@ -1,6 +1,6 @@
 import { HttpError } from 'http-errors';
 
-const errorHandler = (error, req, res) => {
+const errorHandler = (error, req, res, next) => {
   if (error instanceof HttpError) {
     res.status(error.status).json({
       status: error.status,

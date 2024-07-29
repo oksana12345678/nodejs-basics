@@ -1,5 +1,5 @@
 import { calculatePaginationData } from '../utils/calculatePaginationData.js';
-import StudentCollection from '../validation/student.js';
+import StudentCollection from '../db/model/student.js';
 import { SORT_ORDER } from '../constants/index.js';
 
 export const getAllStudents = async ({

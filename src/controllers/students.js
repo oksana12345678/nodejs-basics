@@ -100,3 +100,4 @@ export const patchStudentController = async (req, res, next) => {
     data: result.student,
   });
 };
+

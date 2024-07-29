@@ -1,39 +1,4 @@
 import Joi from 'joi';
-import { model, Schema } from 'mongoose';
-
-const studentSchema = new Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-    },
-    age: {
-      type: Number,
-      required: true,
-    },
-    gender: {
-      type: String,
-      required: true,
-      enum: ['male', 'female', 'other'],
-    },
-    avgMark: {
-      type: Number,
-      required: true,
-    },
-    onDuty: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
-  },
-  {
-    timestamps: true,
-    versionKey: false,
-  },
-);
-
-const StudentCollection = model('students', studentSchema);
-export default StudentCollection;
 
 export const createStudentSchema = Joi.object({
   name: Joi.string().min(3).max(30).required().messages({
@@ -42,7 +7,7 @@ export const createStudentSchema = Joi.object({
     'string.max': 'Username should have at most {#limit} characters',
     'any.required': 'Username is required',
   }),
-  email: Joi.string().email().required(),
+  // email: Joi.string().email().required(),
   age: Joi.number().integer().min(6).max(16).required().messages({
     'number.base': 'Age should be a number!',
     'number.integer': 'Number should be integer!',
@@ -60,6 +25,7 @@ export const createStudentSchema = Joi.object({
     'any.required': 'Mark is required!',
   }),
   onDuty: Joi.boolean(),
+  parentId: Joi.string().required(),
 });
 
 export const updateStudentSchema = Joi.object({
@@ -68,7 +34,7 @@ export const updateStudentSchema = Joi.object({
     'string.min': 'Username should have at least {#limit} characters!',
     'string.max': 'Username should have at most {#limit} characters!',
   }),
-  email: Joi.string().email(),
+  // email: Joi.string().email(),
   age: Joi.number().integer().min(6).max(16).messages({
     'number.base': 'Age should be a number!',
     'number.integer': 'Number should be integer!',
