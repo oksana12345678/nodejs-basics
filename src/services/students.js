@@ -8,12 +8,11 @@ export const getAllStudents = async ({
   sortOrder = SORT_ORDER.ASC,
   sortBy = '_id',
   filter = {},
-  userId,
 }) => {
   const limit = perPage;
   const skip = (page - 1) * perPage;
 
-  const studentsQuery = StudentCollection.find(userId);
+  const studentsQuery = StudentCollection.find();
 
   if (filter.gender) {
     studentsQuery.where('gender').equals(filter.gender);
@@ -42,7 +41,7 @@ export const getAllStudents = async ({
   //   .exec();
 
   const [studentsCount, students] = await Promise.all([
-    StudentCollection.find(userId).merge(studentsQuery).countDocuments(),
+    StudentCollection.find().merge(studentsQuery).countDocuments(),
 
     studentsQuery
       .skip(skip)
@@ -59,36 +58,23 @@ export const getAllStudents = async ({
   };
 };
 
-export const getStudentById = async (studentId, userId) => {
-  const student = await StudentCollection.findOne({ _id: studentId, userId });
-
+export const getStudentById = async (studentId) => {
+  const student = await StudentCollection.findById(studentId);
   return student;
 };
 
 export const createStudent = async (payload) => {
-  const student = await StudentCollection.create({
-    ...payload,
-    userId: payload.userId,
-  });
+  const student = await StudentCollection.create(payload);
+  return student;
+};
+export const deleteStudent = async (studentId) => {
+  const student = await StudentCollection.findOneAndDelete({ _id: studentId });
   return student;
 };
 
-export const deleteStudent = async (studentId, userId) => {
-  const student = await StudentCollection.findOneAndDelete({
-    _id: studentId,
-    userId,
-  });
-  return student;
-};
-
-export const updateStudent = async (
-  studentId,
-  payload,
-  userId,
-  options = {},
-) => {
+export const updateStudent = async (studentId, payload, options = {}) => {
   const rawResult = await StudentCollection.findByIdAndUpdate(
-    { _id: studentId, userId },
+    { _id: studentId },
     payload,
     {
       new: true,
