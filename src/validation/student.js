@@ -28,7 +28,7 @@ const studentSchema = new Schema(
     },
     parentId: {
       type: Schema.Types.ObjectId,
-      ref: 'user',
+      ref: 'users',
     },
     photo: { type: String },
   },

@@ -59,7 +59,8 @@ export const getAllStudents = async ({
 };
 
 export const getStudentById = async (studentId) => {
-  const student = await StudentCollection.findById(studentId);
+  const student = await StudentCollection.findOne({ _id: studentId });
+
   return student;
 };
 

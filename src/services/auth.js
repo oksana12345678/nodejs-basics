@@ -160,6 +160,8 @@ export const resetPassword = async (payload) => {
 
   await UserCollection.updateOne(
     { _id: user._id },
-    { password: encryptedPassword },
+    {
+      password: encryptedPassword,
+    },
   );
 };
