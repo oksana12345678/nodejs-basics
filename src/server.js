@@ -7,7 +7,7 @@ import routers from './routers/index.js';
 import notFoundHandler from './middlewares/notFoundHandler.js';
 import errorHandler from './middlewares/errorHandler.js';
 import cookieParser from 'cookie-parser';
-// import studentRouter from './routers/students.js';
+import { UPLOAD_DIR } from './constants/index.js';
 
 dotenv.config();
 
@@ -36,7 +36,9 @@ const startServer = () => {
   });
 
   app.use(routers);
-  // app.use(studentRouter);
+
+  app.use('/uploads', express.static(UPLOAD_DIR));
+
   app.use('*', notFoundHandler);
   app.use(errorHandler);
 

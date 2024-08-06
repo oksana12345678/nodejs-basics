@@ -9,6 +9,8 @@ import {
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
+import { resetPassword } from '../services/auth.js';
+import saveFileToUploadDir from '../utils/saveFileToUploadDir.js';
 
 export const getStudentsController = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
@@ -21,6 +23,7 @@ export const getStudentsController = async (req, res) => {
     sortBy,
     sortOrder,
     filter,
+    userId: req.user._id,
   });
   res.json({
     status: 200,
@@ -32,7 +35,7 @@ export const getStudentsController = async (req, res) => {
 export const getStudentByIdController = async (req, res, next) => {
   try {
     const { studentId } = req.params;
-    const student = await getStudentById(studentId);
+    const student = await getStudentById(studentId, req.user._id);
 
     if (!student) {
       next(createHttpError(404, 'Student not found'));
@@ -49,7 +52,13 @@ export const getStudentByIdController = async (req, res, next) => {
 };
 
 export const createStudentController = async (req, res) => {
-  const student = await createStudent(req.body);
+  const contactData = {
+    ...req.body,
+    userId: req.user._id,
+  };
+
+  const student = await createStudent(contactData);
+
   res.status(201).json({
     status: 201,
     message: 'Successfully created a student!',
@@ -59,7 +68,8 @@ export const createStudentController = async (req, res) => {
 
 export const deleteStudentController = async (req, res, next) => {
   const { studentId } = req.params;
-  const student = await deleteStudent(studentId);
+  const student = await deleteStudent(studentId, req.user._id);
+
   if (!student) {
     next(createHttpError(404, 'Student not found'));
     return;
@@ -70,7 +80,7 @@ export const deleteStudentController = async (req, res, next) => {
 
 export const upsertStudentController = async (req, res, next) => {
   const { studentId } = req.params;
-  const result = await updateStudent(studentId, req.body, {
+  const result = await updateStudent(studentId, req.user._id, req.body, {
     upsert: true,
   });
   if (!result) {
@@ -87,7 +97,19 @@ export const upsertStudentController = async (req, res, next) => {
 
 export const patchStudentController = async (req, res, next) => {
   const { studentId } = req.params;
-  const result = await updateStudent(studentId, req.body);
+  const photo = req.file;
+
+  let photoUrl;
+
+  if (photo) {
+    photoUrl = await saveFileToUploadDir(photo);
+  }
+
+  const result = await updateStudent(studentId, {
+    ...req.body,
+    userId: req.user._id,
+    photo: photoUrl,
+  });
 
   if (!result) {
     next(createHttpError(404, 'Student not found'));
@@ -101,3 +123,12 @@ export const patchStudentController = async (req, res, next) => {
   });
 };
 
+export const resetPasswordController = async (req, res) => {
+  await resetPassword(req.body);
+
+  res.json({
+    message: 'Password was successfully reset!',
+    status: 200,
+    data: {},
+  });
+};

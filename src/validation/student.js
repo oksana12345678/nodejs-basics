@@ -1,5 +1,46 @@
 import Joi from 'joi';
 
+import { model, Schema } from 'mongoose';
+
+const studentSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    age: {
+      type: Number,
+      required: true,
+    },
+    gender: {
+      type: String,
+      required: true,
+      enum: ['male', 'female', 'other'],
+    },
+    avgMark: {
+      type: Number,
+      required: true,
+    },
+    onDuty: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    parentId: {
+      type: Schema.Types.ObjectId,
+      ref: 'user',
+    },
+    photo: { type: String },
+  },
+  {
+    timestamps: true,
+    versionKey: false,
+  },
+);
+
+const StudentCollection = model('students', studentSchema);
+export default StudentCollection;
+
 export const createStudentSchema = Joi.object({
   name: Joi.string().min(3).max(30).required().messages({
     'string.base': 'Username should be a string',

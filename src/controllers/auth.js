@@ -1,9 +1,10 @@
-import { ONE_DEY } from '../constants/index.js';
+import { ONE_DAY } from '../constants/index.js';
 import {
   loginUser,
-  refreshUserSession,
+  refreshSession,
   registerUser,
   logoutUser,
+  requestResetToken,
 } from '../services/auth.js';
 
 export const registerUserController = async (req, res) => {
@@ -21,12 +22,11 @@ export const loginUserController = async (req, res) => {
 
   res.cookie('refreshToken', session.refreshToken, {
     httpOnly: true,
-    expires: new Date(Date.now() + ONE_DEY),
+    expires: new Date(Date.now() + ONE_DAY),
   });
-
   res.cookie('sessionId', session._id, {
     httpOnly: true,
-    expires: new Date(Date.now() + ONE_DEY),
+    expires: new Date(Date.now() + ONE_DAY),
   });
 
   res.json({
@@ -46,22 +46,22 @@ export const logoutUserController = async (req, res) => {
   res.clearCookie('sessionId');
   res.clearCookie('refreshToken');
 
-  res.send(204);
+  res.status(204).send();
 };
 
 const setupSession = (res, session) => {
   res.cookie('refreshToken', session.refreshToken, {
     httpOnly: true,
-    expires: new Date(Date.now() + ONE_DEY),
+    expires: new Date(Date.now() + ONE_DAY),
   });
   res.cookie('sessionId', session._id, {
     httpOnly: true,
-    expires: new Date(Date.now() + ONE_DEY),
+    expires: new Date(Date.now() + ONE_DAY),
   });
 };
 
 export const refreshUserSessionController = async (req, res) => {
-  const session = await refreshUserSession({
+  const session = await refreshSession({
     sessionId: req.cookies.sessionId,
     refreshToken: req.cookies.refreshToken,
   });
@@ -70,9 +70,20 @@ export const refreshUserSessionController = async (req, res) => {
 
   res.json({
     status: 200,
-    message: 'Successfully refresh a session!',
+    message: 'Successfully refreshed a session!',
     data: {
       accessToken: session.accessToken,
     },
+  });
+};
+
+export const requestResetEmailController = async (req, res) => {
+
+  await requestResetToken(req.body.email);
+  
+  res.json({
+    message: 'Reset password email was successfully sent!',
+    status: 200,
+    data: {},
   });
 };
